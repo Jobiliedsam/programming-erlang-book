@@ -5,7 +5,9 @@
     py_triplets/1,
     perms/1,
     max/2,
-    fib_list/1
+    fib_list/1,
+    odds_and_evens_c/1,
+    odds_and_evens_a/1
 ]).
 
 temp_convert({c, Temperature}) -> {f, 32 + Temperature * 9 / 5};
@@ -28,7 +30,6 @@ py_triplets(N) ->
         A * A + B * B =:= C * C
     ].
 
-
 % @ Anagramsto find all the permutations of a string 
 perms([]) -> [[]];
 perms(L) -> [[H|T] || H <- L, T <- perms(L -- [H])].
@@ -46,3 +47,23 @@ fib_iter(_Inital, _Next, Result, Terms, Terms) -> lists:reverse(Result);
 fib_iter(Initial, Next, Result, Terms, Iter) ->
     H1 = Initial + Next,
     fib_iter(Next, H1, [H1|Result], Terms, Iter + 1).
+
+% @ Generate a tuple with two segregated list between odds and evens - Using Comprehensions List
+% ^ In this way we traverse the list twice - performance problem.
+odds_and_evens_c(List) ->
+    odds = [X || X <- List, (X rem 2) == 1],
+    evens = [X || X <- List, (X rem 2) == 0],
+    {odds, evens}.
+
+% @ Generate a tuple with two segregated list between odds and evens - Using Accumulators Pattern
+odds_and_evens_a(List) ->
+    odds_and_evens_acc(List, [], []).
+
+odds_and_evens_acc([H|T], Odds, Evens) ->
+    case (H rem 2) of
+        1 -> odds_and_evens_acc(T, [H|Odds], Evens);
+        0 -> odds_and_evens_acc(T, Odds, [H|Evens])
+    end;
+odds_and_evens_acc([], Odds, Evens) -> {Odds, Evens}.
+
+
